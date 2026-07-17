@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Slinger - Original Superhero Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1a3e 50%, #2d1b3d 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #ffffff;
+            overflow: hidden;
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 1000px;
+            padding: 20px;
+            background: rgba(10, 14, 39, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 0 50px rgba(100, 200, 255, 0.3), inset 0 0 30px rgba(100, 200, 255, 0.1);
+        }
+
+        .game-header {
+            text-align: center;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, rgba(100, 200, 255, 0.2), rgba(200, 100, 255, 0.2));
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid rgba(100, 200, 255, 0.5);
+        }
+
+        .game-header h1 {
+            font-size: 2.5em;
+            color: #64c8ff;
+            text-shadow: 0 0 20px rgba(100, 200, 255, 0.8);
+            margin-bottom: 10px;
+        }
+
+        .game-header p {
+            color: #c864ff;
+            font-size: 0.9em;
+            text-shadow: 0 0 10px rgba(200, 100, 255, 0.6);
+        }
+
+        .game-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, rgba(100, 200, 255, 0.15), rgba(100, 150, 255, 0.1));
+            border: 2px solid rgba(100, 200, 255, 0.4);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-box:hover {
+            border-color: rgba(100, 200, 255, 0.8);
+            box-shadow: 0 0 15px rgba(100, 200, 255, 0.3);
+        }
+
+        .stat-label {
+            color: #64c8ff;
+            font-size: 0.85em;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            color: #00ff88;
+            font-size: 1.8em;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.6);
+        }
+
+        .character-select {
+            background: linear-gradient(135deg, rgba(200, 100, 255, 0.15), rgba(100, 200, 255, 0.1));
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid rgba(200, 100, 255, 0.4);
+            margin-bottom: 20px;
+        }
+
+        .character-select h3 {
+            color: #c864ff;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px rgba(200, 100, 255, 0.6);
+        }
+
+        .character-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+        }
+
+        .char-btn {
+            background: linear-gradient(135deg, rgba(100, 200, 255, 0.2), rgba(150, 100, 255, 0.2));
+            border: 2px solid rgba(100, 200, 255, 0.5);
+            color: #64c8ff;
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .char-btn:hover {
+            border-color: #64c8ff;
+            box-shadow: 0 0 15px rgba(100, 200, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .char-btn.active {
+            background: linear-gradient(135deg, #64c8ff, #c864ff);
+            color: #0a0e27;
+            border-color: #64c8ff;
+            box-shadow: 0 0 25px rgba(100, 200, 255, 0.8);
+        }
+
+        #gameCanvas {
+            display: block;
+            margin: 0 auto 20px;
+            background: linear-gradient(180deg, #0f1a35 0%, #1a0f35 100%);
+            border: 3px solid #64c8ff;
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(100, 200, 255, 0.4);
+            max-width: 100%;
+            height: auto;
+        }
+
+        .controls-section {
+            background: linear-gradient(135deg, rgba(100, 200, 255, 0.15), rgba(100, 150, 255, 0.1));
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid rgba(100, 200, 255, 0.4);
+            margin-bottom: 20px;
+        }
+
+        .controls-section h3 {
+            color: #64c8ff;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px rgba(100, 200, 255, 0.6);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #64c8ff, #4da8d6);
+            color: #0a0e27;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(100, 200, 255, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(100, 200, 255, 0.5);
+            background: linear-gradient(135deg, #7fd9ff, #5db8e6);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .instructions {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(100, 200, 255, 0.1));
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid rgba(0, 255, 136, 0.3);
+            font-size: 0.9em;
+            line-height: 1.8;
+        }
+
+        .instructions h3 {
+            color: #00ff88;
+            margin-bottom: 12px;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.6);
+        }
+
+        .instructions p {
+            color: #b0b0ff;
+            margin: 8px 0;
+        }
+
+        .game-over-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .game-over-content {
+            text-align: center;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1a3e 50%, #2d1b3d 100%);
+            padding: 50px;
+            border-radius: 25px;
+            border: 3px solid #64c8ff;
+            box-shadow: 0 0 50px rgba(100, 200, 255, 0.5);
+            max-width: 500px;
+        }
+
+        .game-over-content h2 {
+            color: #64c8ff;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(100, 200, 255, 0.8);
+        }
+
+        .game-over-content p {
+            font-size: 1.1em;
+            margin: 15px 0;
+            color: #00ff88;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.6);
+        }
+
+        @media (max-width: 768px) {
+            .game-header h1 {
+                font-size: 1.8em;
+            }
+
+            .game-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .character-buttons {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            button {
+                padding: 10px 20px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <h1>🌟 WEB SLINGER 🌟</h1>
+            <p>Original Superhero Adventure</p>
+        </div>
+
+        <div class="game-stats">
+            <div class="stat-box">
+                <div class="stat-label">SCORE</div>
+                <div class="stat-value" id="score">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">HEALTH</div>
+                <div class="stat-value" id="health">100</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">LEVEL</div>
+                <div class="stat-value" id="level">1</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">HIGH SCORE</div>
+                <div class="stat-value" id="highScore">0</div>
+            </div>
+        </div>
+
+        <div class="character-select">
+            <h3>⚡ SELECT YOUR HERO</h3>
+            <div class="character-buttons">
+                <button class="char-btn active" onclick="selectCharacter('crimson')">
+                    🔴 Crimson<br><small>Fast & Agile</small>
+                </button>
+                <button class="char-btn" onclick="selectCharacter('azure')">
+                    🔵 Azure<br><small>Balanced</small>
+                </button>
+                <button class="char-btn" onclick="selectCharacter('phantom')">
+                    👻 Phantom<br><small>Stealth Mode</small>
+                </button>
+                <button class="char-btn" onclick="selectCharacter('thunder')">
+                    ⚡ Thunder<br><small>Heavy Damage</small>
+                </button>
+                <button class="char-btn" onclick="selectCharacter('shadow')">
+                    🌙 Shadow<br><small>Dark Powers</small>
+                </button>
+            </div>
+        </div>
+
+        <canvas id="gameCanvas" width="900" height="500"></canvas>
+
+        <div class="controls-section">
+            <h3>🎮 CONTROLS</h3>
+            <div class="button-group">
+                <button onclick="toggleGame()">
+                    <span id="playBtnText">▶ START GAME</span>
+                </button>
+                <button onclick="resetGame()">🔄 RESET</button>
+                <button onclick="toggleSound()">
+                    <span id="soundBtnText">🔊 SOUND ON</span>
+                </button>
+            </div>
+            <p style="color: #64c8ff; margin-top: 10px; text-shadow: 0 0 10px rgba(100, 200, 255, 0.6);">
+                ⬅️ ➡️ ARROW KEYS or A/D to move | SPACEBAR to shoot web | P to pause
+            </p>
+        </div>
+
+        <div class="instructions">
+            <h3>📖 HOW TO PLAY</h3>
+            <p>🎯 <strong>Objective:</strong> Defeat enemies and collect power-ups while protecting the city</p>
+            <p>⬅️ ➡️ <strong>Movement:</strong> Use Arrow Keys (← →) or A/D to move left and right</p>
+            <p>🕸️ <strong>Attack:</strong> Press SPACEBAR to shoot web projectiles at enemies</p>
+            <p>💥 <strong>Enemies:</strong> Red minions spawn each level - avoid their attacks!</p>
+            <p>⭐ <strong>Power-ups:</strong> Yellow stars heal you, Blue crystals boost damage</p>
+            <p>📈 <strong>Progression:</strong> Defeat 5 enemies per level to advance</p>
+            <p>❤️ <strong>Health:</strong> You start with 100 health - defend the city!</p>
+        </div>
+    </div>
+
+    <div class="game-over-modal" id="gameOverModal">
+        <div class="game-over-content">
+            <h2 id="gameOverTitle">MISSION COMPLETE!</h2>
+            <p>Final Score: <span id="finalScore">0</span></p>
+            <p>Level Reached: <span id="finalLevel">1</span></p>
+            <p id="gameOverMessage"></p>
+            <br>
+            <button onclick="resetGame()" style="font-size: 1.1em; padding: 15px 35px;">PLAY AGAIN</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Game State
+        let gameRunning = false;
+        let gamePaused = false;
+        let score = 0;
+        let health = 100;
+        let level = 1;
+        let highScore = localStorage.getItem('webSlingerHighScore') || 0;
+        let selectedCharacter = 'crimson';
+        let soundEnabled = true;
+        let enemiesDefeated = 0;
+
+        // Character Properties
+        const characters = {
+            crimson: { color: '#ff4455', speed: 8, damage: 1, size: 25 },
+            azure: { color: '#4488ff', speed: 6, damage: 1.5, size: 28 },
+            phantom: { color: '#88ff88', speed: 7, damage: 1.2, size: 24 },
+            thunder: { color: '#ffff44', speed: 5, damage: 2, size: 32 },
+            shadow: { color: '#8844ff', speed: 6.5, damage: 1.3, size: 26 }
+        };
+
+        // Player Object
+        const player = {
+            x: canvas.width / 2,
+            y: canvas.height - 60,
+            width: 25,
+            height: 25,
+            velocityX: 0,
+            speed: 6,
+            damage: 1
+        };
+
+        let projectiles = [];
+        let enemies = [];
+        let powerUps = [];
+
+        const keys = {};
+        window.addEventListener('keydown', (e) => {
+            keys[e.key] = true;
+            if (e.key === ' ') shootWeb();
+            if (e.key === 'p' || e.key === 'P') togglePause();
+        });
+        window.addEventListener('keyup', (e) => {
+            keys[e.key] = false;
+        });
+
+        function selectCharacter(char) {
+            selectedCharacter = char;
+            const charData = characters[char];
+            player.speed = charData.speed;
+            player.damage = charData.damage;
+            player.width = charData.size;
+            player.height = charData.size;
+
+            document.querySelectorAll('.char-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.closest('.char-btn').classList.add('active');
+        }
+
+        function initGame() {
+            projectiles = [];
+            enemies = [];
+            powerUps = [];
+            player.x = canvas.width / 2;
+            player.y = canvas.height - 60;
+            player.velocityX = 0;
+            enemiesDefeated = 0;
+
+            // Spawn initial enemies
+            const enemyCount = 2 + level;
+            for (let i = 0; i < enemyCount; i++) {
+                spawnEnemy();
+            }
+
+            document.getElementById('health').textContent = health;
+            document.getElementById('score').textContent = score;
+            document.getElementById('level').textContent = level;
+        }
+
+        function spawnEnemy() {
+            const enemy = {
+                x: Math.random() * (canvas.width - 40),
+                y: Math.random() * (canvas.height / 3),
+                width: 25,
+                height: 25,
+                velocityX: (Math.random() - 0.5) * (3 + level * 0.5),
+                velocityY: 1 + level * 0.3,
+                health: 1 + Math.floor(level / 3),
+                color: '#ff3333'
+            };
+            enemies.push(enemy);
+        }
+
+        function shootWeb() {
+            if (!gameRunning || gamePaused) return;
+            
+            const projectile = {
+                x: player.x + player.width / 2,
+                y: player.y,
+                width: 8,
+                height: 15,
+                velocityY: -8,
+                damage: player.damage,
+                color: '#64c8ff'
+            };
+            projectiles.push(projectile);
+        }
+
+        function updateGame() {
+            // Movement
+            if (keys['ArrowLeft'] || keys['a']) {
+                player.velocityX = -player.speed;
+            } else if (keys['ArrowRight'] || keys['d']) {
+                player.velocityX = player.speed;
+            } else {
+                player.velocityX = 0;
+            }
+
+            player.x += player.velocityX;
+            if (player.x < 0) player.x = 0;
+            if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
+
+            // Update Projectiles
+            for (let i = projectiles.length - 1; i >= 0; i--) {
+                projectiles[i].y += projectiles[i].velocityY;
+                if (projectiles[i].y < 0) {
+                    projectiles.splice(i, 1);
+                }
+            }
+
+            // Update Enemies
+            for (let i = enemies.length - 1; i >= 0; i--) {
+                enemies[i].x += enemies[i].velocityX;
+                enemies[i].y += enemies[i].velocityY;
+
+                // Boundary check
+                if (enemies[i].x <= 0 || enemies[i].x + enemies[i].width >= canvas.width) {
+                    enemies[i].velocityX *= -1;
+                }
+
+                // Collision with player
+                if (checkCollision(player, enemies[i])) {
+                    health -= 10;
+                    if (health <= 0) {
+                        endGame();
+                        return;
+                    }
+                    player.y -= 30;
+                }
+
+                // Collision with projectiles
+                for (let j = projectiles.length - 1; j >= 0; j--) {
+                    if (checkCollision(projectiles[j], enemies[i])) {
+                        enemies[i].health -= projectiles[j].damage;
+                        projectiles.splice(j, 1);
+
+                        if (enemies[i].health <= 0) {
+                            // Spawn power-ups
+                            if (Math.random() > 0.5) {
+                                powerUps.push({
+                                    x: enemies[i].x,
+                                    y: enemies[i].y,
+                                    width: 15,
+                                    height: 15,
+                                    type: Math.random() > 0.5 ? 'heal' : 'damage',
+                                    color: Math.random() > 0.5 ? '#ffff44' : '#44ffff'
+                                });
+                            }
+
+                            score += 100;
+                            enemiesDefeated++;
+                            enemies.splice(i, 1);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // Update Power-ups
+            for (let i = powerUps.length - 1; i >= 0; i--) {
+                powerUps[i].y += 2;
+
+                if (checkCollision(player, powerUps[i])) {
+                    if (powerUps[i].type === 'heal') {
+                        health = Math.min(100, health + 25);
+                    } else {
+                        player.damage = Math.min(3, player.damage + 0.5);
+                    }
+                    powerUps.splice(i, 1);
+                } else if (powerUps[i].y > canvas.height) {
+                    powerUps.splice(i, 1);
+                }
+            }
+
+            // Level progression
+            if (enemiesDefeated >= 5 + level * 2) {
+                level++;
+                score += 500;
+                enemiesDefeated = 0;
+                for (let i = 0; i < 1 + Math.floor(level / 2); i++) {
+                    spawnEnemy();
+                }
+            }
+
+            document.getElementById('health').textContent = health;
+            document.getElementById('score').textContent = score;
+            document.getElementById('level').textContent = level;
+        }
+
+        function drawGame() {
+            // Background
+            ctx.fillStyle = '#0f1a35';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Grid background
+            ctx.strokeStyle = 'rgba(100, 200, 255, 0.1)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i < canvas.width; i += 50) {
+                ctx.beginPath();
+                ctx.moveTo(i, 0);
+                ctx.lineTo(i, canvas.height);
+                ctx.stroke();
+            }
+
+            // Draw Player
+            const charData = characters[selectedCharacter];
+            ctx.fillStyle = charData.color;
+            ctx.shadowColor = charData.color;
+            ctx.shadowBlur = 15;
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+            ctx.shadowBlur = 0;
+
+            // Player glow
+            ctx.strokeStyle = charData.color;
+            ctx.lineWidth = 2;
+            ctx.strokeRect(player.x - 2, player.y - 2, player.width + 4, player.height + 4);
+
+            // Draw Projectiles
+            for (let projectile of projectiles) {
+                ctx.fillStyle = projectile.color;
+                ctx.shadowColor = projectile.color;
+                ctx.shadowBlur = 10;
+                ctx.fillRect(projectile.x - projectile.width / 2, projectile.y, projectile.width, projectile.height);
+                ctx.shadowBlur = 0;
+            }
+
+            // Draw Enemies
+            for (let enemy of enemies) {
+                ctx.fillStyle = enemy.color;
+                ctx.shadowColor = enemy.color;
+                ctx.shadowBlur = 10;
+                ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
+                
+                // Health bar
+                ctx.fillStyle = '#00ff88';
+                ctx.fillRect(enemy.x, enemy.y - 8, (enemy.width / (1 + Math.floor(level / 3))) * enemy.health, 4);
+                ctx.shadowBlur = 0;
+            }
+
+            // Draw Power-ups
+            for (let powerUp of powerUps) {
+                ctx.fillStyle = powerUp.color;
+                ctx.shadowColor = powerUp.color;
+                ctx.shadowBlur = 15;
+                ctx.beginPath();
+                ctx.arc(powerUp.x + powerUp.width / 2, powerUp.y + powerUp.height / 2, powerUp.width / 2, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+
+            // Draw UI
+            ctx.fillStyle = '#64c8ff';
+            ctx.font = 'bold 14px Arial';
+            ctx.fillText(`Enemies Defeated: ${enemiesDefeated}/${5 + level * 2}`, 10, 30);
+        }
+
+        function checkCollision(rect1, rect2) {
+            return rect1.x < rect2.x + rect2.width &&
+                   rect1.x + rect1.width > rect2.x &&
+                   rect1.y < rect2.y + rect2.height &&
+                   rect1.y + rect1.height > rect2.y;
+        }
+
+        function toggleGame() {
+            if (!gameRunning) {
+                gameRunning = true;
+                gamePaused = false;
+                document.getElementById('playBtnText').textContent = '⏸ PAUSE';
+                document.getElementById('gameOverModal').style.display = 'none';
+            } else {
+                gameRunning = false;
+                document.getElementById('playBtnText').textContent = '▶ RESUME';
+            }
+        }
+
+        function togglePause() {
+            if (gameRunning) {
+                gamePaused = !gamePaused;
+            }
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            document.getElementById('soundBtnText').textContent = soundEnabled ? '🔊 SOUND ON' : '🔇 SOUND OFF';
+        }
+
+        function resetGame() {
+            gameRunning = false;
+            gamePaused = false;
+            score = 0;
+            health = 100;
+            level = 1;
+            enemiesDefeated = 0;
+            document.getElementById('playBtnText').textContent = '▶ START GAME';
+            document.getElementById('gameOverModal').style.display = 'none';
+            selectCharacter('crimson');
+            initGame();
+            drawGame();
+        }
+
+        function endGame() {
+            gameRunning = false;
+            document.getElementById('playBtnText').textContent = '▶ START GAME';
+            
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem('webSlingerHighScore', highScore);
+            }
+
+            document.getElementById('gameOverModal').style.display = 'flex';
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('finalLevel').textContent = level;
+            document.getElementById('gameOverMessage').textContent = `Great job reaching level ${level}! 🎉`;
+            document.getElementById('highScore').textContent = highScore;
+        }
+
+        function gameLoop() {
+            if (gameRunning && !gamePaused) {
+                updateGame();
+            }
+            drawGame();
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Initialize
+        document.getElementById('highScore').textContent = highScore;
+        initGame();
+        drawGame();
+        gameLoop();
+    </script>
+</body>
+</html>
