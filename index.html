@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soldier Mods Store - Ultimate Mod Nexus</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #1a1a1a; color: white; text-align: center; padding: 50px; }
+        .header { margin-bottom: 30px; }
+        .header a { color: #00ff88; text-decoration: none; font-size: 18px; font-weight: bold; }
+        .header a:hover { text-decoration: underline; }
+        .mod-card { background: #333; padding: 20px; margin: 10px; border-radius: 10px; display: inline-block; width: 200px; }
+        button { background: #00ff88; border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px; font-weight: bold; color: #1a1a1a; }
+        button:hover { background: #00dd77; }
+        #search-box { padding: 15px; width: 300px; border-radius: 25px; border: none; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <a href="https://www.SoldierModsStore.com">🚀 SoldierModsStore.com</a>
+    </div>
+
+    <h1>🚀 Ultimate Mod Nexus</h1>
+    <input type="text" id="search-box" placeholder="What are you looking for? (NBA, GTA, Sims...)" onkeyup="filterMods()">
+    <h3 id="display-text">Showing all mods</h3>
+
+    <div id="mod-container">
+        <div class="mod-card">
+            <h3>NBA 2K26 Mod</h3>
+            <button onclick="window.location.href='https://www.SoldierModsStore.com/download/nba-2k26'">Download</button>
+        </div>
+        <div class="mod-card">
+            <h3>GTA 5 Mod</h3>
+            <button onclick="window.location.href='https://www.SoldierModsStore.com/download/gta-5'">Download</button>
+        </div>
+        <div class="mod-card">
+            <h3>Sims 4 Mod</h3>
+            <button onclick="window.location.href='https://www.SoldierModsStore.com/download/sims-4'">Download</button>
+        </div>
+    </div>
+
+    <hr>
+    <h2>📖 How to Install (PC / Laptop / HP)</h2>
+    <p>1. Download the file from <strong>SoldierModsStore.com</strong>. 2. Extract with WinRAR. 3. Copy to your game directory.</p>
+
+    <script>
+        function filterMods() {
+            let input = document.getElementById('search-box').value;
+            document.getElementById('display-text').innerText = "You are looking for: " + (input || "everything");
+        }
+    </script>
+</body>
+</html>
